@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Girl Show</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+    <div class="tabs">
+        <div class="tab" data-tab="nsfw">NSFW Girls</div>
+        <div class="tab active" data-tab="anime">Anime Girls</div>
+    </div>
+
+    <div class="meme-box">
+        <div id="slider" class="slider"></div>
+
+        <div id="scrollGuide" class="scroll-guide">
+            <div>Lướt xuống</div>
+            <div class="arrow">↓</div>
+        </div>
+    </div>
+
+    <!-- Chỉ 1 container -->
+    <div id="ad-root"></div>
+
+    <div class="desktop-nav" id="desktopNav">
+        <button id="btnUp" class="nav-btn">↑</button>
+        <button id="btnDown" class="nav-btn">↓</button>
+    </div>
+
+</div>
+
+<script>
+const adRoot = document.getElementById("ad-root");
+
+function loadAd(src, containerId) {
+    const script = document.createElement("script");
+    script.async = true;
+    script.setAttribute("data-cfasync", "false");
+    script.src = src;
+
+    const div = document.createElement("div");
+    div.id = containerId;
+
+    adRoot.appendChild(script);
+    adRoot.appendChild(div);
+}
+
+/* ===== SIMPLE WIDTH DETECTION ===== */
+
+const isDesktop = window.innerWidth >= 768;
+
+if (isDesktop) {
+    loadAd(
+        "https://shorterwanderer.com/00d4cb035cb7743457956145fb416846/invoke.js",
+        "container-00d4cb035cb7743457956145fb416846"
+    );
+} else {
+    loadAd(
+        "https://shorterwanderer.com/5f5ab8644698881f3992e5ea1a8a3945/invoke.js",
+        "container-5f5ab8644698881f3992e5ea1a8a3945"
+    );
+}
+</script>
+
+
+<script src="js/app.js"></script>
+</body>
+</html>

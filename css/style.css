@@ -1,0 +1,222 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #f2f2f2;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow: hidden;
+}
+
+.app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ================= TABS ================= */
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0 10px;
+    gap: 40px;
+}
+
+.tab {
+    font-size: 20px;
+    font-weight: bold;
+    color: gray;
+    cursor: pointer;
+    position: relative;
+}
+
+.tab.active {
+    color: black;
+}
+
+.tab.active::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: black;
+    border-radius: 5px;
+}
+
+.meme-box {
+    width: 90%;
+    max-width: 400px;
+    height: 65vh;
+    margin-top: 20px;
+    border-radius: 30px;
+    border: 3px solid #bdbdbd;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
+    position: relative;
+}
+
+/* ================= MEME BOX ================= */
+
+
+
+/* Slider full box */
+.slider {
+    height: 100%;
+    width: 100%;
+    transition: transform 300ms ease;
+}
+
+/* Mỗi slide full meme-box */
+.slide {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Ảnh luôn centered */
+.slide img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    /* border-radius: 20px;
+    border: 2px solid #bdbdbd; */
+}
+
+/* ================= VIDEO ================= */
+
+.slide video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;   /* an toàn nhất */
+    display: block;
+}
+
+
+/* Locked */
+
+.locked img {
+    filter: blur(25px);
+}
+
+.lock-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+/* ================= GUIDE ================= */
+
+.scroll-guide {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    opacity: 1;
+    z-index: 20;
+    pointer-events: none; /* không cản swipe */
+}
+
+
+.arrow {
+    font-size: 44px;
+    color: red;
+    animation: bounce 1.2s infinite;
+}
+
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+    100% { transform: translateY(0); }
+}
+
+/* ================= DESKTOP NAV ================= */
+
+.desktop-nav {
+    position: absolute;
+    right: calc(47% - 300px);
+    top: 47%;
+    transform: translateY(-50%);
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.nav-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: none;
+    font-size: 26px;
+    font-weight: bold;
+    cursor: pointer;
+    background: white;
+    border: 2px solid #bdbdbd;
+    transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+    background: #f0f0f0;
+    transform: scale(1.05);
+}
+
+/* Chỉ hiển thị trên desktop thực sự */
+@media (hover: hover) and (pointer: fine) {
+    .desktop-nav {
+        display: flex;
+    }
+}
+
+/* ================= LOAD MORE ================= */
+
+.load-more-btn {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: red;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 30;
+    animation: floatBtn 2.2s ease-in-out infinite;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.load-more-btn:hover {
+    background: #cc0000;
+    transform: translateX(-50%) scale(1.05);
+}
+
+/* Floating effect */
+@keyframes floatBtn {
+    0%   { transform: translate(-50%, 0); }
+    50%  { transform: translate(-50%, -6px); }
+    100% { transform: translate(-50%, 0); }
+}
+
