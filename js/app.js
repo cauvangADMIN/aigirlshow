@@ -9,14 +9,15 @@ const memeBox = document.querySelector(".meme-box");
 
 /* ================= CONFIG ================= */
 
-const BATCH_SIZE = 8;
-const MAX_DOM_SLIDES = 30;
+const BATCH_SIZE = 9;
+const MAX_DOM_SLIDES = 20;
 const JSON_PATH = "data/video.json";
 
 /* ================= STATE ================= */
 
 let allData = {};
 let currentTab = "anime";
+let guideDismissed = false;
 
 function createEmptyState() {
     return {
@@ -24,8 +25,22 @@ function createEmptyState() {
         currentIndex: 0,
         loadedCount: 0,
         pendingNextBatch: null,
+        loadMoreClickCount: 0,   // 👈 thêm
         initialized: false
     };
+}
+
+function dismissGuideOnce() {
+    if (guideDismissed) return;
+
+    guideDismissed = true;
+
+    if (guide) {
+        guide.style.opacity = "0";
+        setTimeout(() => {
+            guide.style.display = "none";
+        }, 300);
+    }
 }
 
 const tabState = {
@@ -34,16 +49,17 @@ const tabState = {
 };
 
 let loadMoreBtn = null;
-let loadMoreClickCount = 0;
+// let loadMoreClickCount = 0;
 
 /* ================= LOAD MORE ADS MAP ================= */
 
 const loadMoreAdMap = {
     1: "https://shorterwanderer.com/qv394jzf?key=1e88e85568f404ad029fc7a4e3db685f",
     2: "https://shorterwanderer.com/d91f7rhz?key=6da6633dca4cad3f743f1633b8b5da53",
-    4: "https://shorterwanderer.com/zmw6nnbnh?key=5f6e16e896ed5dfefee6515585b5ee03",
-    6: "https://shorterwanderer.com/v358mgkvej?key=9b130202fbcda0879599843d16bd7577",
-    10: "https://shorterwanderer.com/xmjpt9bm?key=7fed831526b5ff86aa9eb8d43f01e0c8"
+    5: "https://shorterwanderer.com/zmw6nnbnh?key=5f6e16e896ed5dfefee6515585b5ee03",
+    8: "https://shorterwanderer.com/v358mgkvej?key=9b130202fbcda0879599843d16bd7577",
+    12: "https://shorterwanderer.com/xmjpt9bm?key=7fed831526b5ff86aa9eb8d43f01e0c8",
+    16: "https://shorterwanderer.com/qv394jzf?key=1e88e85568f404ad029fc7a4e3db685f"
 };
 
 /* ================= UTIL ================= */
@@ -83,7 +99,6 @@ function loadTab(tabName) {
 
     updateSlider();
 
-    if (guide) guide.style.display = tabName === "anime" ? "block" : "none";
 }
 
 /* ================= LOAD MORE BUTTON ================= */
@@ -101,16 +116,26 @@ function createLoadMoreButton() {
 
         const state = tabState[currentTab];
 
-        loadMoreClickCount++;
+        state.loadMoreClickCount++;
 
-        if (loadMoreAdMap[loadMoreClickCount]) {
-            window.open(loadMoreAdMap[loadMoreClickCount], "_blank");
+        if (loadMoreAdMap[state.loadMoreClickCount]) {
+            window.open(loadMoreAdMap[state.loadMoreClickCount], "_blank");
         }
 
         if (state.pendingNextBatch !== null) {
+
+            const previousLength = slider.children.length;
+
             renderBatch(state.pendingNextBatch);
+
             state.pendingNextBatch = null;
             hideLoadMoreButton();
+
+            // 🔥 Auto next 1 slide
+            if (slider.children.length > previousLength) {
+                state.currentIndex++;
+                updateSlider();
+            }
         }
     });
 
@@ -157,7 +182,37 @@ function createSlide(url) {
     video.playsInline = true;
     video.preload = "metadata";
 
+    /* ===== LOADING OVERLAY ===== */
+
+    const loadingOverlay = document.createElement("div");
+    loadingOverlay.className = "video-loading";
+
+    loadingOverlay.innerHTML = `
+        <div class="spinner"></div>
+        <div class="loading-text">Loading...</div>
+    `;
+
     slide.appendChild(video);
+    slide.appendChild(loadingOverlay);
+
+    /* ===== VIDEO EVENTS ===== */
+
+    video.addEventListener("waiting", () => {
+        loadingOverlay.style.display = "flex";
+    });
+
+    video.addEventListener("loadstart", () => {
+        loadingOverlay.style.display = "flex";
+    });
+
+    video.addEventListener("canplay", () => {
+        loadingOverlay.style.display = "none";
+    });
+
+    video.addEventListener("playing", () => {
+        loadingOverlay.style.display = "none";
+    });
+
     return slide;
 }
 
@@ -226,6 +281,8 @@ function trimDOM() {
 /* ================= NAVIGATION ================= */
 
 function nextSlide() {
+
+    dismissGuideOnce(); 
 
     const state = tabState[currentTab];
 
@@ -313,3 +370,16 @@ if (btnUp && btnDown) {
     btnUp.addEventListener("click", prevSlide);
     btnDown.addEventListener("click", nextSlide);
 }
+
+/* ================= WARNING MODAL ================= */
+
+const warningModal = document.getElementById("warningModal");
+const acceptWarningBtn = document.getElementById("acceptWarning");
+
+// Chặn scroll phía sau
+document.body.style.overflow = "hidden";
+
+acceptWarningBtn.addEventListener("click", () => {
+    warningModal.style.display = "none";
+    document.body.style.overflow = "hidden"; // vẫn giữ hidden vì app bạn đang dùng overflow hidden
+});
